@@ -110,8 +110,6 @@ export const getStaticProps: GetStaticProps = async () => {
       api.get('http://localhost:3333/users/count'),
     ]);
 
-  console.log(poolCountResponse.data);
-
   return {
     revalidate: 60,
     props: {
