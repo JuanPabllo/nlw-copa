@@ -1,4 +1,4 @@
-import { GetServerSideProps } from 'next';
+import { GetStaticProps } from 'next';
 import Image from 'next/image';
 import { FormEvent, useState } from 'react';
 import Avatars from '../assets/avatares.png';
@@ -102,7 +102,7 @@ export default function Home({
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   const [poolCountResponse, guessesCountResponse, uersCountResponse] =
     await Promise.all([
       api.get('http://localhost:3333/pools/count'),
@@ -110,7 +110,10 @@ export const getServerSideProps: GetServerSideProps = async () => {
       api.get('http://localhost:3333/users/count'),
     ]);
 
+  console.log(poolCountResponse.data);
+
   return {
+    revalidate: 60,
     props: {
       poolsCount: poolCountResponse.data.count,
       guessesCount: guessesCountResponse.data.count,
