@@ -1,5 +1,6 @@
 import { GetServerSideProps } from 'next';
 import Image from 'next/image';
+import { FormEvent, useState } from 'react';
 import Avatars from '../assets/avatares.png';
 import Check from '../assets/check.svg';
 import Logo from '../assets/logo.svg';
@@ -17,6 +18,27 @@ export default function Home({
   guessesCount,
   usersCount,
 }: HomeProps) {
+  const [namePool, setNamePool] = useState('');
+
+  const createPool = async (event: FormEvent) => {
+    event.preventDefault();
+    try {
+      const { data: response } = await api.post('/pools', {
+        title: namePool,
+      });
+
+      const { code } = response;
+
+      await navigator.clipboard.writeText(code);
+
+      alert('Copiado para a área de transferência!');
+      setNamePool('');
+    } catch (error) {
+      console.log(error);
+      alert('Erro ao criar o bolão.');
+    }
+  };
+
   return (
     <div className="max-w-[1124px] h-screen mx-auto grid grid-cols-2 items-center gap-28">
       <main>
@@ -34,12 +56,14 @@ export default function Home({
           </strong>
         </div>
 
-        <form className="mt-10 flex gap-2">
+        <form onSubmit={createPool} className="mt-10 flex gap-2">
           <input
-            className="flex-1 px-6 py-4 rounded bg-gray-800 border border-gray-600 text-sm"
+            className="flex-1 px-6 py-4 rounded bg-gray-800 border border-gray-600 text-sm text-gray-100"
             type="text"
             required
             placeholder="Qual nome do seu bolão?"
+            onChange={(event) => setNamePool(event.target.value)}
+            value={namePool}
           />
           <button
             className="bg-yellow-500 px-6 py-4 rounded font-bold text-gray-900 text-sm uppercase hover:bg-yellow-700"
